@@ -6,6 +6,9 @@ Build this [login form] (https://www.figma.com/design/aP8x5olXKsdXUShxpOzs71/Sim
 
 A RESTful API for user authentication. This API provides endpoints for user registration, login, logout, and a single protected route.
 
+Base URL for all API endpoints: https://login-practice-125p.onrender.com/
+For example, to register a new user, send a POST request to: https://login-practice-125p.onrender.com/auth/signup
+
 ## API Endpoints
 
 ### POST /auth/signup
