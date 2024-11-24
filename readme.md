@@ -8,7 +8,7 @@
 </table>
 
 ## Requirements
-Build a responsive [login page](https://www.figma.com/design/0cz9VnEOKG9fCUwGAnbsqM/Login?t=iXBhhKkqChyMq3Pt-1) in [React](https://react.dev/), welcome screen and sign up form and integrate the API.
+Build a responsive login page, welcome screen and sign up form in [React](https://react.dev/); and integrate the API. The designs can be found in this [Figma](https://www.figma.com/design/0cz9VnEOKG9fCUwGAnbsqM/Login?t=iXBhhKkqChyMq3Pt-1), copy the design to the best of your ability.
 
 Other than React, you are free to use whatever technology you feel will make your job easier.
 
