@@ -47,8 +47,8 @@ const authenticateUser = async (req, res, next) => {
 };
 
 // Token verification endpoint
-app.get('/api/verify-token', authenticateUser, (req, res) => {
-    res.status(200).json({ message: 'Token is valid' });
+app.get('/auth/verify-token', authenticateUser, (req, res) => {
+    res.status(200).json({ message: 'Token is valid', user: req.user });
 });
 
 // Protected route example
