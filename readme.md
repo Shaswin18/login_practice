@@ -1,10 +1,17 @@
 # Task
 
+<table>
+  <tr>
+    <td><img src="images/login_desktop.png" width="300px"></td>
+    <td><img src="images/login_mobile.png.png" width="300px"></td>
+  </tr>
+</table>
+
 Build this [login form](https://www.figma.com/design/aP8x5olXKsdXUShxpOzs71/Simple-Log-in-Page---Dekstop%2Fphone-(Community)?node-id=0-1&t=CCKIWiMHx82rHEED-1) in [React](https://react.dev/) and integrate the API.
 
 Other than React, you are free to use whatever technology you feel will make your job easier.
 
-Host your app using whichever free solution you feel comfortable using.
+Finally, host your app using whichever free solution you feel comfortable using.
 
 # Authentication API Documentation
 
