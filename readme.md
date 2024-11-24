@@ -1,6 +1,6 @@
 # Task
 
-Build this [login form] (https://www.figma.com/design/aP8x5olXKsdXUShxpOzs71/Simple-Log-in-Page---Dekstop%2Fphone-(Community)?node-id=0-1&t=CCKIWiMHx82rHEED-1) and integrate the API
+Build this [login form](https://www.figma.com/design/aP8x5olXKsdXUShxpOzs71/Simple-Log-in-Page---Dekstop%2Fphone-(Community)?node-id=0-1&t=CCKIWiMHx82rHEED-1) and integrate the API
 
 # Authentication API Documentation
 
