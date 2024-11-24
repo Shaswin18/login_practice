@@ -2,8 +2,8 @@
 
 <table>
   <tr>
-    <td><img src="images/login_desktop.png"></td>
-    <td><img src="images/login_mobile.png"></td>
+    <td style="padding: 0 20px;"><img src="images/login_desktop.png"></td>
+    <td style="padding: 0 20px;"><img src="images/login_mobile.png"></td>
   </tr>
 </table>
 
