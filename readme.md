@@ -13,12 +13,12 @@ Recommended (but not obligatory)
 - [Postman](https://www.postman.com/) for testing API calls. 
 - [Netlify](https://www.netlify.com/), [AWS Amplify](https://aws.amazon.com/amplify/), [Vercel](https://vercel.com/) to host your web application.
 
-## Authentication API Documentation
+## API Documentation
 
-A RESTful API for user authentication. This API provides endpoints for user login, logout, and a single protected route that requires the user to be logged in.
+This API provides endpoints for user login, logout, and a single protected route that requires the user to be logged in.
 
-Base URL for all API endpoints: https://login-practice-125p.onrender.com/
-For example, to register a new user, send a POST request to: https://login-practice-125p.onrender.com/auth/signup
+- Base URL: https://login-practice-125p.onrender.com/
+- For example, to log in, send a POST request to: https://login-practice-125p.onrender.com/auth/login with the email and password in the request body.
 
 ## API Endpoints
 
