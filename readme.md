@@ -104,7 +104,6 @@ Verify if the current user is logged in.
 **Success Response (200):**
 ```json
 {
-    "message": "You are logged in",
     "user": {
         "id": "c8460792-bf38-405a-a8c6-aefa545027bb",
         "aud": "authenticated",
