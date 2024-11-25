@@ -1,12 +1,3 @@
-# Task
-
-<table>
-  <tr>
-    <td style="padding: 0 20px;"><img src="images/login_desktop.png"></td>
-    <td style="padding: 0 20px;"><img src="images/login_mobile.png"></td>
-  </tr>
-</table>
-
 ## Requirements
 Build a responsive login page and welcome screen in [React](https://react.dev/); and integrate the API (documentation is below). The designs can be found in this [Figma](https://www.figma.com/design/0cz9VnEOKG9fCUwGAnbsqM/Login?t=iXBhhKkqChyMq3Pt-1), copy the design to the best of your ability.
 
@@ -18,7 +9,7 @@ Other than React, you are free to use whatever technology you feel will make you
 
 Finally, host your app using whichever free solution you feel comfortable using and share the GitHub repository.
 
-# Authentication API Documentation
+## Authentication API Documentation
 
 A RESTful API for user authentication. This API provides endpoints for user login, logout, and a single protected route that requires the user to be logged in.
 
