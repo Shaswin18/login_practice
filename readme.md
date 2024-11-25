@@ -20,7 +20,7 @@ Finally, host your app using whichever free solution you feel comfortable using 
 
 # Authentication API Documentation
 
-A RESTful API for user authentication. This API provides endpoints for user registration, login, logout, and a single protected route.
+A RESTful API for user authentication. This API provides endpoints for user login, logout, and a single protected route that requires the user to be logged in.
 
 Base URL for all API endpoints: https://login-practice-125p.onrender.com/
 For example, to register a new user, send a POST request to: https://login-practice-125p.onrender.com/auth/signup
