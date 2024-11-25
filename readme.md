@@ -92,11 +92,6 @@ Authenticate a user and receive a session token.
 ### POST /auth/logout
 Log out the current user and invalidate their session.
 
-**Headers:**
-```
-Authorization: Bearer <jwt_token>
-```
-
 **Success Response (200):**
 ```json
 {
@@ -107,7 +102,7 @@ Authorization: Bearer <jwt_token>
 **Error Response (401):**
 ```json
 {
-    "error": "Invalid or expired token"
+    "error": "ERROR_MESSAGE"
 }
 ```
 
@@ -163,7 +158,7 @@ Verify if the current user is logged in.
 **Error Response (401):**
 ```json
 {
-    "error": "Invalid or expired token"
+    "error": "Please log in."
 }
 ```
 
