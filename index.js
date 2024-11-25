@@ -5,36 +5,103 @@ const cors = require('cors');
 
 const app = express();
 
-app.use(cors());
+// Configure CORS properly
+app.use(cors({
+    origin: process.env.CLIENT_URL || '*', // In production, set this to your frontend URL
+    credentials: true
+}));
 app.use(express.json());
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 
-// Login endpoint
+// Login endpoint - now returns the session token
 app.post('/auth/login', async (req, res) => {
-    const { email, password } = req.body;
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    try {
+        const { email, password } = req.body;
+        
+        if (!email || !password) {
+            return res.status(400).json({ error: 'Email and password are required' });
+        }
 
-    if (error) return res.status(400).json({ error: error.message });
-    return res.status(200).json({ user: data.user });
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
+
+        if (error) {
+            return res.status(401).json({ error: error.message });
+        }
+
+        // Return both user data and access token
+        return res.status(200).json({
+            user: data.user,
+            access_token: data.session.access_token
+        });
+    } catch (error) {
+        console.error('Login error:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
-// Logout endpoint
+// Logout endpoint - now requires token
 app.post('/auth/logout', async (req, res) => {
-    const { error } = await supabase.auth.signOut();
+    try {
+        const token = req.headers.authorization?.replace('Bearer ', '');
+        
+        if (!token) {
+            return res.status(401).json({ error: 'No token provided' });
+        }
 
-    if (error) return res.status(400).json({ error: error.message });
-    return res.status(200).json({ message: 'Logged out successfully' });
+        // Create a new Supabase client with the user's token
+        const userSupabase = createClient(
+            process.env.SUPABASE_URL,
+            process.env.SUPABASE_ANON_KEY,
+            {
+                global: {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            }
+        );
+
+        const { error } = await userSupabase.auth.signOut();
+
+        if (error) {
+            return res.status(400).json({ error: error.message });
+        }
+
+        return res.status(200).json({ message: 'Logged out successfully' });
+    } catch (error) {
+        console.error('Logout error:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
-
-// Middleware to check authentication
+// Updated authentication middleware
 const authenticateUser = async (req, res, next) => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error) return res.status(401).json({ error: 'Please log in.' });
+    try {
+        const token = req.headers.authorization?.replace('Bearer ', '');
+        
+        if (!token) {
+            return res.status(401).json({ error: 'Authentication required' });
+        }
 
-    req.user = data.user;
-    next();
+        // Verify the token and get user data
+        const { data: { user }, error } = await supabase.auth.getUser(token);
+
+        if (error || !user) {
+            return res.status(401).json({ error: 'Invalid or expired token' });
+        }
+
+        // Attach user and token to request object
+        req.user = user;
+        req.token = token;
+        next();
+    } catch (error) {
+        console.error('Authentication error:', error);
+        return res.status(401).json({ error: 'Authentication failed' });
+    }
 };
 
 // Token verification endpoint
@@ -45,23 +112,36 @@ app.get('/auth/verify-user', authenticateUser, (req, res) => {
 // Protected route example
 app.get('/api/secret-message', authenticateUser, async (req, res) => {
     try {
-      const { data, error } = await supabase
-        .from('secret_message')
-        .select('*')
-        .eq('id', 1)
-        .single()
-  
-      if (error) {
-        console.error('Error fetching secret message:', error.message);
-        return res.status(500).json({ error: 'Failed to retrieve secret message' });
-      }
-  console.log(data)
-      res.send(data)
+        // Create a new Supabase client with the user's token
+        const userSupabase = createClient(
+            process.env.SUPABASE_URL,
+            process.env.SUPABASE_ANON_KEY,
+            {
+                global: {
+                    headers: {
+                        Authorization: `Bearer ${req.token}`
+                    }
+                }
+            }
+        );
+
+        const { data, error } = await userSupabase
+            .from('secret_message')
+            .select('*')
+            .eq('id', 1)
+            .single();
+
+        if (error) {
+            console.error('Error fetching secret message:', error.message);
+            return res.status(500).json({ error: 'Failed to retrieve secret message' });
+        }
+
+        res.json(data);
     } catch (error) {
-      console.error('Unexpected error:', error.message);
-      res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Unexpected error:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
-  });
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
