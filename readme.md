@@ -39,5 +39,122 @@ Logs a user in and returns authentication token.
         "email": "user@example.com",
         // ... other user data
     },
-    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." // You'll need this for authenticated requests
 }
+```
+
+**Error Response (401):**
+```json
+{
+    "error": "Invalid login credentials"
+}
+```
+
+### POST /auth/logout
+Logs out the current user and invalidates their token.
+
+**Headers Required:**
+```
+Authorization: Bearer <your_access_token>
+```
+
+**Success Response (200):**
+```json
+{
+    "message": "Logged out successfully"
+}
+```
+
+### GET /auth/verify-user
+Verifies if the current token is valid.
+
+**Headers Required:**
+```
+Authorization: Bearer <your_access_token>
+```
+
+**Success Response (200):**
+```json
+{
+    "user": {
+        "id": "c8460792-bf38-405a-a8c6-aefa545027bb",
+        "email": "user@example.com",
+        // ... other user data
+    }
+}
+```
+
+### GET /api/secret-message
+Protected route that requires authentication.
+
+**Headers Required:**
+```
+Authorization: Bearer <your_access_token>
+```
+
+**Success Response (200):**
+```json
+{
+    "id": 1,
+    "created_at": "2024-11-25T00:31:40.662521+00:00",
+    "secret_message": "SECRET_MESSAGE"
+}
+```
+
+## Client Implementation Example
+
+```javascript
+// Login
+const login = async (email, password) => {
+    const response = await fetch('https://login-practice-125p.onrender.com/auth/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+    });
+    const data = await response.json();
+    
+    // Store the token securely
+    localStorage.setItem('token', data.access_token);
+    return data;
+};
+
+// Making authenticated requests
+const getSecretMessage = async () => {
+    const token = localStorage.getItem('token');
+    const response = await fetch('https://login-practice-125p.onrender.com/api/secret-message', {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    return await response.json();
+};
+
+// Logout
+const logout = async () => {
+    const token = localStorage.getItem('token');
+    await fetch('https://login-practice-125p.onrender.com/auth/logout', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    localStorage.removeItem('token');
+};
+```
+
+## Important Notes
+
+1. All authenticated requests must include the access token in the Authorization header
+2. Tokens are required for all protected routes
+3. Each user maintains their own separate session
+4. The API supports multiple concurrent users
+5. Invalid or expired tokens will receive a 401 response
+
+For production implementations, consider:
+- Using HTTP-only cookies instead of localStorage
+- Implementing refresh token rotation
+- Adding CSRF protection
+- Setting up proper error handling
+- Implementing rate limiting
