@@ -101,49 +101,6 @@ Authorization: Bearer <your_access_token>
 }
 ```
 
-## Client Implementation Example
-
-```javascript
-// Login
-const login = async (email, password) => {
-    const response = await fetch('https://login-practice-125p.onrender.com/auth/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-    });
-    const data = await response.json();
-    
-    // Store the token securely
-    localStorage.setItem('token', data.access_token);
-    return data;
-};
-
-// Making authenticated requests
-const getSecretMessage = async () => {
-    const token = localStorage.getItem('token');
-    const response = await fetch('https://login-practice-125p.onrender.com/api/secret-message', {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
-    return await response.json();
-};
-
-// Logout
-const logout = async () => {
-    const token = localStorage.getItem('token');
-    await fetch('https://login-practice-125p.onrender.com/auth/logout', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
-    localStorage.removeItem('token');
-};
-```
-
 ## Important Notes
 
 1. All authenticated requests must include the access token in the Authorization header
