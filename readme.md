@@ -1,13 +1,17 @@
 ## Requirements
 Build a responsive login page and welcome screen in [React](https://react.dev/); and integrate the API (documentation is below). The designs can be found in this [Figma](https://www.figma.com/design/0cz9VnEOKG9fCUwGAnbsqM/Login?t=iXBhhKkqChyMq3Pt-1), copy the design to the best of your ability.
 
-The login page should use the provided API endpoints to log the user in. I have sent you the email and password.
+1. The login page should use the provided API endpoints to log the user in. I have sent you the email and password.
 
-The welcome screen should display the secret message from the secret message API endpoint.
+2. Once the user is logged in, welcome screen should display the secret message from the secret message API endpoint and a button to log out using the provided endpoint.
+
+3. Finally, host your app using whichever free solution you feel comfortable using and share the GitHub repository.
 
 Other than React, you are free to use whatever technology you feel will make your job easier.
 
-Finally, host your app using whichever free solution you feel comfortable using and share the GitHub repository.
+Recommended (but not obligatory)
+- [Postman](https://www.postman.com/) for testing API calls. 
+- [Netlify](https://www.netlify.com/), [AWS Amplify](https://aws.amazon.com/amplify/), [Vercel](https://vercel.com/) to host your web application.
 
 ## Authentication API Documentation
 
