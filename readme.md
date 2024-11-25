@@ -28,7 +28,7 @@ For example, to register a new user, send a POST request to: https://login-pract
 ## API Endpoints
 
 ### POST /auth/login
-Authenticate a user and receive a session token.
+Logs a user in and starts a session.
 
 **Request Body:**
 ```json
