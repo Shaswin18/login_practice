@@ -100,18 +100,3 @@ Authorization: Bearer <your_access_token>
     "secret_message": "SECRET_MESSAGE"
 }
 ```
-
-## Important Notes
-
-1. All authenticated requests must include the access token in the Authorization header
-2. Tokens are required for all protected routes
-3. Each user maintains their own separate session
-4. The API supports multiple concurrent users
-5. Invalid or expired tokens will receive a 401 response
-
-For production implementations, consider:
-- Using HTTP-only cookies instead of localStorage
-- Implementing refresh token rotation
-- Adding CSRF protection
-- Setting up proper error handling
-- Implementing rate limiting
