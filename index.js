@@ -53,7 +53,7 @@ app.post('/auth/login', async (req, res) => {
     }
 });
 
-router.post('/refresh', async (req, res) => {
+app.post('/refresh', async (req, res) => {
     const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
@@ -83,13 +83,13 @@ router.post('/refresh', async (req, res) => {
 
 app.post('/auth/logout', async (req, res) => {
     try {
-        const token = req.headers.authorization?.replace('Bearer ', '');
+        const access_token = req.headers.authorization?.replace('Bearer ', '');
 
-        if (!token) {
+        if (!access_token) {
             return res.status(401).json({ error: 'No token provided' });
         }
 
-        const { error } = await supabase.auth.signOut();
+        const { error } = await supabase.auth.admin.signOut(access_token);
 
         if (error) {
             return res.status(400).json({ error: error.message });
