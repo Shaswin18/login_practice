@@ -43,13 +43,6 @@ Logs a user in and returns authentication token. Additionally, the refresh token
 }
 ```
 
-**Error Response (401):**
-```json
-{
-    "error": "Invalid login credentials"
-}
-```
-
 ### POST /auth/logout
 Logs out the current user and invalidates their token.
 
