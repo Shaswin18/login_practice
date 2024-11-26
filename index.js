@@ -69,17 +69,12 @@ app.post('/auth/refresh', async (req, res) => {
 
         const { access_token, refresh_token } = data.session;
 
-        res.cookie('refresh_token', refresh_token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'strict',
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-        });
+        setRefreshTokenCookie(res, refresh_token);
 
         res.json({ access_token });
     } catch (error) {
         console.error('Error refreshing token:', error);
-        res.status(401).json({ error: error.message});
+        res.status(401).json({ error: 'Error refreshing token.'});
     }
 });
 
