@@ -21,7 +21,7 @@ Recommended (but not obligatory):
 ## API Endpoints
 
 ### POST /auth/login
-Logs a user in and returns authentication token.
+Logs a user in and returns authentication token. Additionally, the refresh token is stored in an HtmlOnly cookie.
 
 **Request Body:**
 ```json
@@ -62,6 +62,17 @@ Authorization: Bearer <your_access_token>
 ```json
 {
     "message": "Logged out successfully"
+}
+```
+
+### POST /auth/refresh
+Obtains a new access token
+
+
+**Success Response (200):**
+```json
+{
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 

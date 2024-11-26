@@ -71,7 +71,7 @@ app.post('/auth/refresh', async (req, res) => {
 
         setRefreshTokenCookie(res, refresh_token);
 
-        res.json({ access_token });
+        res.json({ access_token: access_token });
     } catch (error) {
         console.error('Error refreshing token:', error);
         res.status(401).json({ error: 'Error refreshing token.'});
