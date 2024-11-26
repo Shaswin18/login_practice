@@ -1,5 +1,6 @@
 const express = require('express');
 const { createClient } = require('@supabase/supabase-js');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
 const cors = require('cors');
 
@@ -10,6 +11,7 @@ app.use(cors({
     credentials: true
 }));
 app.use(express.json());
+app.use(cookieParser());
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 
@@ -54,20 +56,20 @@ app.post('/auth/login', async (req, res) => {
 });
 
 app.post('/auth/refresh', async (req, res) => {
-    const refreshToken = req.cookies.refreshToken;
+    const stored_refresh_token = req.cookies.refresh_token;
 
-    if (!refreshToken) {
+    if (!stored_refresh_token) {
         return res.status(401).json({ error: 'No refresh token provided.' });
     }
 
     try {
-        const { data, error } = await supabase.auth.refreshSession({ refresh_token: refreshToken });
+        const { data, error } = await supabase.auth.refreshSession({ refresh_token: stored_refresh_token });
 
         if (error) throw error;
 
         const { access_token, refresh_token } = data.session;
 
-        res.cookie('refreshToken', refresh_token, {
+        res.cookie('refresh_token', refresh_token, {
             httpOnly: true,
             secure: true,
             sameSite: 'strict',
@@ -77,7 +79,7 @@ app.post('/auth/refresh', async (req, res) => {
         res.json({ access_token });
     } catch (error) {
         console.error('Error refreshing token:', error);
-        res.status(401).json({ error: 'Failed to refresh token' });
+        res.status(401).json({ error: error.message});
     }
 });
 
