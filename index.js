@@ -53,7 +53,7 @@ app.post('/auth/login', async (req, res) => {
     }
 });
 
-app.post('/refresh', async (req, res) => {
+app.post('/auth/refresh', async (req, res) => {
     const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
