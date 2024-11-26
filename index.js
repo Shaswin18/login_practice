@@ -5,20 +5,29 @@ const cors = require('cors');
 
 const app = express();
 
-// Configure CORS properly
 app.use(cors({
-    origin: process.env.CLIENT_URL || '*', // In production, set this to your frontend URL
+    origin: '*',
     credentials: true
 }));
 app.use(express.json());
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 
-// Login endpoint - now returns the session token
+const setRefreshTokenCookie = (res, refreshToken) => {
+    const cookieOptions = {
+        httpOnly: true,
+        secure: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: '/',
+    };
+
+    res.cookie('refresh_token', refreshToken, cookieOptions);
+};
+
 app.post('/auth/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        
+
         if (!email || !password) {
             return res.status(400).json({ error: 'Email and password are required' });
         }
@@ -32,7 +41,8 @@ app.post('/auth/login', async (req, res) => {
             return res.status(401).json({ error: error.message });
         }
 
-        // Return both user data and access token
+        setRefreshTokenCookie(res, data.session.refresh_token);
+
         return res.status(200).json({
             user: data.user,
             access_token: data.session.access_token
@@ -43,29 +53,43 @@ app.post('/auth/login', async (req, res) => {
     }
 });
 
-// Logout endpoint - now requires token
+router.post('/refresh', async (req, res) => {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+        return res.status(401).json({ error: 'No refresh token provided.' });
+    }
+
+    try {
+        const { data, error } = await supabase.auth.refreshSession({ refresh_token: refreshToken });
+
+        if (error) throw error;
+
+        const { access_token, refresh_token } = data.session;
+
+        res.cookie('refreshToken', refresh_token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
+
+        res.json({ access_token });
+    } catch (error) {
+        console.error('Error refreshing token:', error);
+        res.status(401).json({ error: 'Failed to refresh token' });
+    }
+});
+
 app.post('/auth/logout', async (req, res) => {
     try {
         const token = req.headers.authorization?.replace('Bearer ', '');
-        
+
         if (!token) {
             return res.status(401).json({ error: 'No token provided' });
         }
 
-        // Create a new Supabase client with the user's token
-        const userSupabase = createClient(
-            process.env.SUPABASE_URL,
-            process.env.SUPABASE_ANON_KEY,
-            {
-                global: {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            }
-        );
-
-        const { error } = await userSupabase.auth.signOut();
+        const { error } = await supabase.auth.signOut();
 
         if (error) {
             return res.status(400).json({ error: error.message });
@@ -78,16 +102,14 @@ app.post('/auth/logout', async (req, res) => {
     }
 });
 
-// Updated authentication middleware
 const authenticateUser = async (req, res, next) => {
     try {
         const token = req.headers.authorization?.replace('Bearer ', '');
-        
+
         if (!token) {
             return res.status(401).json({ error: 'Authentication required' });
         }
 
-        // Verify the token and get user data
         const { data: { user }, error } = await supabase.auth.getUser(token);
 
         if (error || !user) {
@@ -104,28 +126,13 @@ const authenticateUser = async (req, res, next) => {
     }
 };
 
-// Token verification endpoint
 app.get('/auth/verify-user', authenticateUser, (req, res) => {
     res.status(200).json({ user: req.user });
 });
 
-// Protected route example
 app.get('/api/secret-message', authenticateUser, async (req, res) => {
     try {
-        // Create a new Supabase client with the user's token
-        const userSupabase = createClient(
-            process.env.SUPABASE_URL,
-            process.env.SUPABASE_ANON_KEY,
-            {
-                global: {
-                    headers: {
-                        Authorization: `Bearer ${req.token}`
-                    }
-                }
-            }
-        );
-
-        const { data, error } = await userSupabase
+        const { data, error } = await supabase
             .from('secret_message')
             .select('*')
             .eq('id', 1)
