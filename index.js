@@ -55,6 +55,7 @@ app.post('/auth/login', async (req, res) => {
     }
 });
 
+// THIS WON'T WORK UNTIL I SET A SPECIFIC CORS ORIGIN
 app.post('/auth/refresh', async (req, res) => {
     const stored_refresh_token = req.cookies.refresh_token;
 
