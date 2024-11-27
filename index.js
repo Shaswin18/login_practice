@@ -26,6 +26,24 @@ const setRefreshTokenCookie = (res, refreshToken) => {
     res.cookie('refresh_token', refreshToken, cookieOptions);
 };
 
+const logAction = async (user, activity) => {
+    try {
+        const { data, error } = await supabase
+            .from('secret_message_audit')
+            .insert([
+                {
+                    user: user,
+                    activity: activity,
+                }
+            ]);
+
+        if (error) throw error;
+    } catch (error) {
+        console.error('Error logging activity:', error.message);
+        throw error;
+    }
+};
+
 app.post('/auth/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -44,7 +62,7 @@ app.post('/auth/login', async (req, res) => {
         }
 
         setRefreshTokenCookie(res, data.session.refresh_token);
-
+        logAction(data.user.email, 'login')
         return res.status(200).json({
             user: data.user,
             access_token: data.session.access_token
@@ -75,7 +93,7 @@ app.post('/auth/refresh', async (req, res) => {
         res.json({ access_token: access_token });
     } catch (error) {
         console.error('Error refreshing token:', error);
-        res.status(401).json({ error: 'Error refreshing token.'});
+        res.status(401).json({ error: 'Error refreshing token.' });
     }
 });
 
@@ -87,7 +105,7 @@ app.post('/auth/logout', async (req, res) => {
             return res.status(401).json({ error: 'No token provided' });
         }
 
-        const { error } = await supabase.auth.admin.signOut(access_token);
+        const { data, error } = await supabase.auth.admin.signOut(access_token);
 
         if (error) {
             return res.status(400).json({ error: error.message });
@@ -125,6 +143,7 @@ const authenticateUser = async (req, res, next) => {
 };
 
 app.get('/auth/verify-user', authenticateUser, (req, res) => {
+    logAction(req.user.email, 'verified token')
     res.status(200).json({ user: req.user });
 });
 
@@ -140,7 +159,7 @@ app.get('/api/secret-message', authenticateUser, async (req, res) => {
             console.error('Error fetching secret message:', error.message);
             return res.status(500).json({ error: 'Failed to retrieve secret message' });
         }
-
+        logAction(req.user.email, 'accessed the secret message')
         res.json(data);
     } catch (error) {
         console.error('Unexpected error:', error);
